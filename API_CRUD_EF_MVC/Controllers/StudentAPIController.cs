@@ -38,7 +38,30 @@ namespace API_CRUD_EF_MVC.Controllers
             await context.Students.AddAsync(student);
             await context.SaveChangesAsync();
             return Ok(student);
-            
+        }
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Student>> UpdateStudent(int id, Student student)
+        {
+            if(id != student.Id)
+            {
+                return BadRequest();
+            }
+            context.Entry(student).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+            return Ok(student);
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Student>> DeleteStudent(int id)
+        {
+            var data = await context.Students.FindAsync(id);
+            if (data == null)
+            {
+                return NotFound();
+            }
+            context.Students.Remove(data);
+            await context.SaveChangesAsync();
+            return Ok();
+
         }
     }
 }
