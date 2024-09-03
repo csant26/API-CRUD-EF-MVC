@@ -60,5 +60,61 @@ namespace MVC_CRUD_EF_API.Controllers
             }
             return View(student);
         }
+        [HttpPost]
+        public IActionResult Edit(Student student)
+        {
+            string data = JsonConvert.SerializeObject(student);
+            StringContent stringContent = new StringContent(data, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = client.PutAsync(url+student.id, stringContent).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["Edit_message"] = "Student edited!";
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            Student student = new Student();
+            HttpResponseMessage response = client.GetAsync(url + id).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string result = response.Content.ReadAsStringAsync().Result;
+                var data = JsonConvert.DeserializeObject<Student>(result);
+                if (data != null)
+                {
+                    student = data;
+                }
+            }
+            return View(student);
+        }
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            Student student = new Student();
+            HttpResponseMessage response = client.GetAsync(url + id).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                string result = response.Content.ReadAsStringAsync().Result;
+                var data = JsonConvert.DeserializeObject<Student>(result);
+                if (data != null)
+                {
+                    student = data;
+                }
+            }
+            return View(student);
+        }
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            HttpResponseMessage response = client.DeleteAsync(url + id).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["Delete_message"]= "Student Deleted!";
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
     }
 }
